@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<style>
+ table {
+          border: 1px solid #D6DDE6;
+          border-collapse: collapse;
+          width: 100%;
+     }
+
+     table td {
+          border: 1px solid #D6DDE6;
+          padding: 0.3em;
+     }
+
+     table th {
+          border: 1px solid #828282;
+          background-color: #BCBCBC;
+          font-weight: bold;
+          text-align: left;
+          padding-left: 0.3em;
+     }
+
+     .zebra tbody tr:nth-child(odd) {
+          background-color: rgb(255, 255, 255);
+          /* фон нечетных строк */
+     }
+
+     .zebra tbody tr:nth-child(even) {
+          background-color: rgb(250, 250, 250);
+          /* фон четных строк */
+     }
+</style>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- <link rel="stylesheet" href="table.css"> -->
+  <title></title>
+</head>
+
+<body>
+  <table class="zebra">
+    <tr>
+      %colnames%
+    </tr>
+    %data%
+  </table>
+</body>
+
+</html>
