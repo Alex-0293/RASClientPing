@@ -1,29 +1,35 @@
-﻿$ImportResult = Import-Module AlexkUtils  -PassThru
-if ($null -eq $ImportResult) {
-    Write-Host "Module 'AlexkUtils' does not loaded!" -ForegroundColor red
+﻿<#
+    .SYNOPSIS 
+        .AUTOR
+        .DATE
+        .VER
+    .DESCRIPTION
+    .PARAMETER
+    .EXAMPLE
+#>
+Param (
+    [Parameter( Mandatory = $false, Position = 0, HelpMessage = "Initialize global settings." )]
+    [bool] $InitGlobal = $true,
+    [Parameter( Mandatory = $false, Position = 1, HelpMessage = "Initialize local settings." )]
+    [bool] $InitLocal = $true   
+)
+
+$Global:ScriptInvocation = $MyInvocation
+if ($env:AlexKFrameworkInitScript) { . "$env:AlexKFrameworkInitScript" -MyScriptRoot (Split-Path $PSCommandPath -Parent) -InitGlobal $InitGlobal -InitLocal $InitLocal } Else { Write-Host "Environmental variable [AlexKFrameworkInitScript] does not exist!" -ForegroundColor Red; exit 1 }
+if ($LastExitCode) { exit 1 }
+# Error trap
+trap {
+    if (Get-Module -FullyQualifiedName AlexkUtils) {
+        Get-ErrorReporting $_
+
+        . "$GlobalSettingsPath\$SCRIPTSFolder\Finish.ps1"  
+    }
+    Else {
+        Write-Host "[$($MyInvocation.MyCommand.path)] There is error before logging initialized. Error: $_" -ForegroundColor Red
+    }   
     exit 1
 }
-else {
-    $ImportResult = $null
-}
-
-#requires -version 3
-
-#########################################################################
-function Get-Workdir {
-    if ($PSScriptRoot -eq "") {
-        if ($PWD -ne "") {
-            $MyScriptRoot = $PWD
-        }        
-        else {
-            Write-Host "Where i am? What is my work dir?"
-        }
-    }
-    else {
-        $MyScriptRoot = $PSScriptRoot
-    }
-    return $MyScriptRoot
-}
+################################# Script start here #################################
 Function Get-StringToArray ($string) {
     $Array = @()
     $StringArray = $string -split "`n"
@@ -44,24 +50,9 @@ Function Get-StringToArray ($string) {
     }
     return $Array
 }
-# Error trap
-trap {
-    Get-ErrorReporting $_
-    exit 1
-}
-#########################################################################
-
-Clear-Host
-
-$MyScriptRoot = Get-Workdir
-
-Get-VarsFromFile    "$MyScriptRoot\Vars.ps1"
-Initialize-Logging   $MyScriptRoot "Latest"
 
 [array]$ConArray = @()
 $Date = Get-Date
-
-
 
 #Get-RemoteAccessConnectionStatisticsSummary
 #Get-RemoteAccessConnectionStatistics |select * | Out-GridView
@@ -133,3 +124,6 @@ if ($LastLog -ne "") {
 
     Send-Email @params
 }  
+
+################################# Script end here ###################################
+. "$GlobalSettingsPath\$SCRIPTSFolder\Finish.ps1"

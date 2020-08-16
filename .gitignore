@@ -1,3 +1,4 @@
 DATA/RAS.csv
-LOGS/Errors.log
+LOGS/*
 SETTINGS/Settings.ps1
+ACL/*
